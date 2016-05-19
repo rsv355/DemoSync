@@ -1,13 +1,24 @@
 package parsedemo.com.demosync;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import parsedemo.com.demosync.helpers.EnumType;
+import parsedemo.com.demosync.helpers.GetPostClass;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -21,65 +32,89 @@ public class MainActivity extends AppCompatActivity {
 
 
         rv = (RecyclerView)findViewById(R.id.rv);
+        prepareMovieData();
 
-        mAdapter = new MoviesAdapter(movieList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rv.setLayoutManager(mLayoutManager);
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setAdapter(mAdapter);
 
-        prepareMovieData();
+        final String PREFS_NAME = "MyPrefsFile";
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+        if (settings.getBoolean("my_first_time", true)) {
+            //the app is being launched for first time, do something
+            Log.e("Comments", "First time");
+
+            //startService(new Intent(MainActivity.this,MyService.class));
+
+            AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(MainActivity.this, AlramReciver.class);
+            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, 0);
+            am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 2 * 60 * 1000, pi); // Millisec * Second * Minute
+
+
+            settings.edit().putBoolean("my_first_time", false).commit();
+        }
+
+    }
+
+    private void syncData(){
+
+        new GetPostClass("http://www.edubuzz.info/EduBuzzApp/rest/register/testService", EnumType.GET){
+
+            @Override
+            public void response(String response) {
+                try{
+                    Data currentData = new GsonBuilder().create().fromJson(response,Data.class);
+
+                    DatabaseHandler handler = new DatabaseHandler(getApplicationContext());
+
+                    Log.e("## Total rcvd in serv",""+currentData.getData().size());
+
+                    ArrayList<Movie> mainData = new ArrayList<Movie>();
+
+                    for(int i=0;i<currentData.getData().size();i++){
+                        Movie mve = new Movie();
+                        mve.setTitle(currentData.getData().get(i).getItem1());
+                        mve.setGenre(currentData.getData().get(i).getItem2());
+                        mve.setYear(currentData.getData().get(i).getItem3());
+
+                        mainData.add(mve);
+                    }
+
+                    handler.openDataBase();
+                    handler.saveMovie(mainData);
+
+                    handler.close();
+
+                  //  ShowNotification("New Message Received");
+
+                }catch (Exception e){
+                    Log.e("## EXC in SERV",e.toString());
+                }
+            }
+
+            @Override
+            public void error(String error) {
+
+            }
+        }.call();
     }
 
     private void prepareMovieData() {
-        Movie movie = new Movie("Mad Max: Fury Road", "Action & Adventure", "2015");
-        movieList.add(movie);
 
-        movie = new Movie("Inside Out", "Animation, Kids & Family", "2015");
-        movieList.add(movie);
+        try {
+            DatabaseHandler handler = new DatabaseHandler(MainActivity.this);
+            handler.openDataBase();
+            movieList = handler.getMovie();
 
-        movie = new Movie("Star Wars: Episode VII - The Force Awakens", "Action", "2015");
-        movieList.add(movie);
+            mAdapter = new MoviesAdapter(movieList);
+            mAdapter.notifyDataSetChanged();
+            handler.close();
+        }catch (Exception e){
+            Log.e("## EXC fetch data",e.toString());
+        }
 
-        movie = new Movie("Shaun the Sheep", "Animation", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("The Martian", "Science Fiction & Fantasy", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Mission: Impossible Rogue Nation", "Action", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Up", "Animation", "2009");
-        movieList.add(movie);
-
-        movie = new Movie("Star Trek", "Science Fiction", "2009");
-        movieList.add(movie);
-
-        movie = new Movie("The LEGO Movie", "Animation", "2014");
-        movieList.add(movie);
-
-        movie = new Movie("Iron Man", "Action & Adventure", "2008");
-        movieList.add(movie);
-
-        movie = new Movie("Aliens", "Science Fiction", "1986");
-        movieList.add(movie);
-
-        movie = new Movie("Chicken Run", "Animation", "2000");
-        movieList.add(movie);
-
-        movie = new Movie("Back to the Future", "Science Fiction", "1985");
-        movieList.add(movie);
-
-        movie = new Movie("Raiders of the Lost Ark", "Action & Adventure", "1981");
-        movieList.add(movie);
-
-        movie = new Movie("Goldfinger", "Action & Adventure", "1965");
-        movieList.add(movie);
-
-        movie = new Movie("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014");
-        movieList.add(movie);
-
-        mAdapter.notifyDataSetChanged();
-    }
+}
 }

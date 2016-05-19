@@ -15,47 +15,47 @@ public class Data {
      * Item3 : 18/05/2016
      */
 
-    @SerializedName("Data")
-    private List<SubData> Data;
+    @SerializedName("data")
+    private List<SubData> data;
 
     public List<SubData> getData() {
-        return Data;
+        return data;
     }
 
     public void setData(List<SubData> Data) {
-        this.Data = Data;
+        this.data = Data;
     }
 
     public static class SubData {
-        @SerializedName("Item1")
-        private String Item1;
-        @SerializedName("Item2")
-        private String Item2;
-        @SerializedName("Item3")
-        private String Item3;
+        @SerializedName("item1")
+        private String item1;
+        @SerializedName("item2")
+        private String item2;
+        @SerializedName("item3")
+        private String item3;
 
         public String getItem1() {
-            return Item1;
+            return item1;
         }
 
         public void setItem1(String Item1) {
-            this.Item1 = Item1;
+            this.item1 = Item1;
         }
 
         public String getItem2() {
-            return Item2;
+            return item2;
         }
 
         public void setItem2(String Item2) {
-            this.Item2 = Item2;
+            this.item2 = Item2;
         }
 
         public String getItem3() {
-            return Item3;
+            return item3;
         }
 
         public void setItem3(String Item3) {
-            this.Item3 = Item3;
+            this.item3 = Item3;
         }
     }
 }

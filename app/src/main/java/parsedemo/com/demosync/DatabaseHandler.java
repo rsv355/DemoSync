@@ -113,7 +113,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void saveMovie(ArrayList<Movie> menu) {
         myDataBase = this.getWritableDatabase();
-        myDataBase.delete(TABLE_TEST, null, null);
+       // myDataBase.delete(TABLE_TEST, null, null);
 
         ContentValues values = new ContentValues();
 
@@ -132,18 +132,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase sql=this.getReadableDatabase();
 
-        String query = "SELECT * FROM MenuDetails";
+        String query = "SELECT * FROM test";
 
         Cursor c = sql.rawQuery(query, null);
-        while(c.moveToNext()) {
+        c.moveToLast();
+       do{
             Movie item = new Movie();
             item.setTitle(c.getString(c.getColumnIndexOrThrow("item1")));
             item.setGenre(c.getString(c.getColumnIndexOrThrow("item2")));
             item.setYear(c.getString(c.getColumnIndexOrThrow("item3")));
 
             MENU.add(item);
-        }
-        c.close();
+        } while(c.moveToPrevious());
+            c.close();
 
         return MENU;
     }

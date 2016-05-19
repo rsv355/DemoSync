@@ -24,17 +24,16 @@
 
 
         <service
-            android:process=":myService"
             android:name=".MyService"
             android:enabled="true" />
 
-        <receiver android:name=".PowerONBroadcastReceiver">
+     <!--   <receiver android:name=".PowerONBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
-        </receiver>
-
+        </receiver>-->
+        <receiver android:name=".AlramReciver" android:process=":remote"  />
     </application>
 
 </manifest>

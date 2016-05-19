@@ -39,12 +39,15 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import parsedemo.com.demosync.helpers.EnumType;
+import parsedemo.com.demosync.helpers.GetPostClass;
+
 /**
  * Created by krishnakumar on 19-08-2015.
  */
 public class MyService extends Service {
 
-    public static final long NOTIFY_INTERVAL = 3 * 60 * 1000; // 5 minutes
+    public static final long NOTIFY_INTERVAL = 2 * 60 * 1000; // 5 minutes
     //public static final long NOTIFY_INTERVAL = 1 * 60 * 1000; //1 minutes
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
@@ -94,10 +97,8 @@ public class MyService extends Service {
 
     @Override
     public void onCreate() {
-
-
         super.onCreate();
-        // cancel if already existed
+      /*  // cancel if already existed
         if (mTimer != null) {
             mTimer.cancel();
         } else {
@@ -105,7 +106,28 @@ public class MyService extends Service {
             mTimer = new Timer();
         }
         // schedule task
-        mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);
+        mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);*/
+
+
+     ///   mHandler.postDelayed(new Runnable() {
+      //      @Override
+      //      public void run() {
+                Log.e("@@@@ SErvice ", "called ");
+
+                Toast.makeText(getApplicationContext(), "Service called", Toast.LENGTH_SHORT).show();
+
+
+                if (isInternetConnected(getApplicationContext())) {
+
+                    syncData();
+
+                } else {
+                    Log.e("## else", "my serice else");
+                    //Toast.makeText(getApplicationContext(), "Please connect your Internet", Toast.LENGTH_LONG).show();
+                }
+
+       //     }
+       // },NOTIFY_INTERVAL);
     }
 
     class TimeDisplayTimerTask extends TimerTask {
@@ -125,7 +147,7 @@ public class MyService extends Service {
 
                     if (isInternetConnected(getApplicationContext())) {
 
-                        //syncTips();
+                        syncData();
 
                     } else {
                         Log.e("## else", "my serice else");
@@ -140,8 +162,51 @@ public class MyService extends Service {
 
     }
 
+    private void syncData(){
 
-    private void ShowNotification(String type, String msg) {
+        new GetPostClass("http://www.edubuzz.info/EduBuzzApp/rest/register/testService", EnumType.GET){
+
+            @Override
+            public void response(String response) {
+                try{
+                    Data currentData = new GsonBuilder().create().fromJson(response,Data.class);
+
+                    DatabaseHandler handler = new DatabaseHandler(getApplicationContext());
+
+                    Log.e("## Total rcvd in serv",""+currentData.getData().size());
+
+                    ArrayList<Movie> mainData = new ArrayList<Movie>();
+
+                    for(int i=0;i<currentData.getData().size();i++){
+                        Movie mve = new Movie();
+                        mve.setTitle(currentData.getData().get(i).getItem1());
+                        mve.setGenre(currentData.getData().get(i).getItem2());
+                        mve.setYear(currentData.getData().get(i).getItem3());
+
+                        mainData.add(mve);
+                    }
+
+                    handler.openDataBase();
+                    handler.saveMovie(mainData);
+
+                    handler.close();
+
+                    ShowNotification("New Message Received");
+
+                }catch (Exception e){
+                    Log.e("## EXC in SERV",e.toString());
+                }
+            }
+
+            @Override
+            public void error(String error) {
+
+            }
+        }.call();
+    }
+
+
+    private void ShowNotification(String msg) {
 
 
         alarmNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -168,7 +233,7 @@ public class MyService extends Service {
         //  }
 
         alamNotificationBuilder = new NotificationCompat.Builder(
-                getApplicationContext()).setContentTitle(type).setSmallIcon(R.mipmap.ic_launcher)
+                getApplicationContext()).setContentTitle("Demo Sync").setSmallIcon(R.mipmap.ic_launcher)
                 .setStyle(inboxStyle)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setSound(alarmSound)
