@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, 0);
             am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 3 * 60 * 1000, pi); // Millisec * Second * Minute
 
-
             settings.edit().putBoolean("my_first_time", false).commit();
         }
 
