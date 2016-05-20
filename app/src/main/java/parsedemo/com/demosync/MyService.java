@@ -63,10 +63,6 @@ public class MyService extends Service {
         return null;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
 
    /* @Override
     public void onDestroy() {
@@ -129,7 +125,7 @@ public class MyService extends Service {
        //     }
        // },NOTIFY_INTERVAL);
     }
-
+/*
     class TimeDisplayTimerTask extends TimerTask {
 
         @Override
@@ -160,7 +156,7 @@ public class MyService extends Service {
             });
         }
 
-    }
+    }*/
 
     private void syncData(){
 
