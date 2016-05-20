@@ -45,6 +45,7 @@ public class AlramReciver extends WakefulBroadcastReceiver {
             syncData();
 
         } else {
+            completeWakefulIntent(inten);
             Log.e("## else", "my serice else");
             //Toast.makeText(getApplicationContext(), "Please connect your Internet", Toast.LENGTH_LONG).show();
         }
