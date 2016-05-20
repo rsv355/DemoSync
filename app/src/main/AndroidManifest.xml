@@ -23,17 +23,6 @@
         </activity>
 
 
-
-    <!--    <service
-            android:name=".MyService"
-            android:enabled="true" />-->
-
-     <!--   <receiver android:name=".PowerONBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>-->
         <receiver android:name=".AlramReciver" android:process=":remote"  >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

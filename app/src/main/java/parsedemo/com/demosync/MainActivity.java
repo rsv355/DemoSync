@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
             //the app is being launched for first time, do something
             Log.e("Comments", "First time");
 
-            //startService(new Intent(MainActivity.this,MyService.class));
 
             AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);

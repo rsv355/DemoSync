@@ -32,7 +32,7 @@ public class AlramReciver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        context.startService(new Intent(context,MyService.class));
+
         _ctx =context;
         Log.e("@@@@ SErvice ", "called ");
 
