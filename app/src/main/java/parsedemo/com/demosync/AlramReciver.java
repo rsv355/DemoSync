@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -25,14 +26,14 @@ import parsedemo.com.demosync.helpers.GetPostClass;
 /**
  * Created by krishnakumar on 19-05-2016.
  */
-public class AlramReciver extends BroadcastReceiver {
+public class AlramReciver extends WakefulBroadcastReceiver {
     private NotificationManager alarmNotificationManager;
     NotificationCompat.Builder alamNotificationBuilder;
     Context _ctx;
-
+    Intent inten;
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        inten = intent;
         _ctx =context;
         Log.e("@@@@ SErvice ", "called ");
 
@@ -83,6 +84,8 @@ public class AlramReciver extends BroadcastReceiver {
                 }catch (Exception e){
                     Log.e("## EXC in SERV",e.toString());
                 }
+
+                completeWakefulIntent(inten);
             }
 
             @Override
