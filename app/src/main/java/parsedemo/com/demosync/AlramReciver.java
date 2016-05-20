@@ -37,7 +37,7 @@ public class AlramReciver extends WakefulBroadcastReceiver {
         _ctx =context;
         Log.e("@@@@ SErvice ", "called ");
 
-        Toast.makeText(context, "Service called", Toast.LENGTH_SHORT).show();
+    //    Toast.makeText(context, "Service called", Toast.LENGTH_SHORT).show();
 
 
         if (isInternetConnected(context)) {
