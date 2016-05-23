@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import github.nisrulz.easydeviceinfo.EasyDeviceInfo;
 import parsedemo.com.demosync.helpers.EnumType;
 import parsedemo.com.demosync.helpers.GetPostClass;
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rv;
     MoviesAdapter mAdapter;
     GcmNetworkManager mGcmNetworkManager;
+    PeriodicTask task;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         mGcmNetworkManager = GcmNetworkManager.getInstance(this);
 
-        rv = (RecyclerView)findViewById(R.id.rv);
+        rv = (RecyclerView) findViewById(R.id.rv);
         prepareMovieData();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -44,14 +47,13 @@ public class MainActivity extends AppCompatActivity {
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setAdapter(mAdapter);
 
-        final String PREFS_NAME = "MyPrefsFile";
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
-        if (settings.getBoolean("my_first_time", true)) {
-            //the app is being launched for first time, do something
-            Log.e("Comments", "First time");
-
-            PeriodicTask task = new PeriodicTask.Builder()
+        EasyDeviceInfo easyDeviceInfo = new EasyDeviceInfo(MainActivity.this);
+        if (easyDeviceInfo.getManufacturer().contains("Xiaomi") || easyDeviceInfo.getDevice().contains("Xiaomi") ||
+                easyDeviceInfo.getModel().contains("Xiaomi")) {
+            Log.e("Xiaomi device", "mi device");
+            mGcmNetworkManager.getInstance(MainActivity.this).cancelAllTasks(MyTaskService.class);
+            task = new PeriodicTask.Builder()
                     .setService(MyTaskService.class)
                     .setTag("NM CALLES")
                     .setPeriod(30L)
@@ -60,33 +62,51 @@ public class MainActivity extends AppCompatActivity {
 
             mGcmNetworkManager.schedule(task);
 
+        }else{
+            final String PREFS_NAME = "MyPrefsFile";
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+            if (settings.getBoolean("my_first_time", true)) {
+                //the app is being launched for first time, do something
+                Log.e("Comments", "First time");
+
+                task = new PeriodicTask.Builder()
+                        .setService(MyTaskService.class)
+                        .setTag("NM CALLES")
+                        .setPeriod(30L)
+                        .setPersisted(true)
+                        .build();
+
+                mGcmNetworkManager.schedule(task);
+
 /*
             AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 180000, pi); // Millisec * Second * Minute
 */
-            settings.edit().putBoolean("my_first_time", false).commit();
+                settings.edit().putBoolean("my_first_time", false).commit();
+            }
         }
 
     }
 
-    private void syncData(){
+    private void syncData() {
 
-        new GetPostClass("http://www.edubuzz.info/EduBuzzApp/rest/register/testService", EnumType.GET){
+        new GetPostClass("http://www.edubuzz.info/EduBuzzApp/rest/register/testService", EnumType.GET) {
 
             @Override
             public void response(String response) {
-                try{
-                    Data currentData = new GsonBuilder().create().fromJson(response,Data.class);
+                try {
+                    Data currentData = new GsonBuilder().create().fromJson(response, Data.class);
 
                     DatabaseHandler handler = new DatabaseHandler(getApplicationContext());
 
-                    Log.e("## Total rcvd in serv",""+currentData.getData().size());
+                    Log.e("## Total rcvd in serv", "" + currentData.getData().size());
 
                     ArrayList<Movie> mainData = new ArrayList<Movie>();
 
-                    for(int i=0;i<currentData.getData().size();i++){
+                    for (int i = 0; i < currentData.getData().size(); i++) {
                         Movie mve = new Movie();
                         mve.setTitle(currentData.getData().get(i).getItem1());
                         mve.setGenre(currentData.getData().get(i).getItem2());
@@ -100,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
 
                     handler.close();
 
-                  //  ShowNotification("New Message Received");
+                    //  ShowNotification("New Message Received");
 
-                }catch (Exception e){
-                    Log.e("## EXC in SERV",e.toString());
+                } catch (Exception e) {
+                    Log.e("## EXC in SERV", e.toString());
                 }
             }
 
@@ -124,9 +144,9 @@ public class MainActivity extends AppCompatActivity {
             mAdapter = new MoviesAdapter(movieList);
             mAdapter.notifyDataSetChanged();
             handler.close();
-        }catch (Exception e){
-            Log.e("## EXC fetch data",e.toString());
+        } catch (Exception e) {
+            Log.e("## EXC fetch data", e.toString());
         }
 
-}
+    }
 }
