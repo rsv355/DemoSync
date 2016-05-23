@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
             AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);
-            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, 0);
+            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 180000, pi); // Millisec * Second * Minute
 
             settings.edit().putBoolean("my_first_time", false).commit();

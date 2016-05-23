@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class AlramReciver extends WakefulBroadcastReceiver {
     NotificationCompat.Builder alamNotificationBuilder;
     Context _ctx;
     Intent inten;
+    PowerManager.WakeLock wl;
     @Override
     public void onReceive(Context context, Intent intent) {
         inten = intent;
@@ -39,12 +41,15 @@ public class AlramReciver extends WakefulBroadcastReceiver {
 
     //    Toast.makeText(context, "Service called", Toast.LENGTH_SHORT).show();
 
-
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "YOUR TAG");
+         wl.acquire();
         if (isInternetConnected(context)) {
 
             syncData();
 
         } else {
+            wl.release();
             completeWakefulIntent(inten);
             Log.e("## else", "my serice else");
             //Toast.makeText(getApplicationContext(), "Please connect your Internet", Toast.LENGTH_LONG).show();
@@ -86,12 +91,14 @@ public class AlramReciver extends WakefulBroadcastReceiver {
                     Log.e("## EXC in SERV",e.toString());
                 }
 
+                wl.release();
                 completeWakefulIntent(inten);
             }
 
             @Override
             public void error(String error) {
-
+                wl.release();
+                completeWakefulIntent(inten);
             }
         }.call();
     }
