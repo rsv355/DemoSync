@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setAdapter(mAdapter);
 
-
         EasyDeviceInfo easyDeviceInfo = new EasyDeviceInfo(MainActivity.this);
         if (easyDeviceInfo.getManufacturer().contains("Xiaomi") || easyDeviceInfo.getDevice().contains("Xiaomi") ||
                 easyDeviceInfo.getModel().contains("Xiaomi")) {
