@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             task = new PeriodicTask.Builder()
                     .setService(MyTaskService.class)
                     .setTag("NM CALLES")
-                    .setPeriod(30L)
+                    .setPeriod(180000L)
                     .setPersisted(true)
                     .build();
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 task = new PeriodicTask.Builder()
                         .setService(MyTaskService.class)
                         .setTag("NM CALLES")
-                        .setPeriod(30L)
+                        .setPeriod(180000L)
                         .setPersisted(true)
                         .build();
 
