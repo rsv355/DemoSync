@@ -3,6 +3,8 @@ package parsedemo.com.demosync;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.evernote.android.job.JobManager;
+
 /**
  * Application class that called once when application is installed for the first time on device.
  * This class includes the integration of Volly [third party framework for calling webservices]
@@ -33,6 +35,7 @@ public class MyApplication extends Application {
         // initialize the singleton
         sInstance = this;
         DatabaseHandler handler = new DatabaseHandler(getApplicationContext());
+        JobManager.create(this).addJobCreator(new DemoJobCreator());
         try {
             handler.createDataBase();
         } catch (Exception e) {

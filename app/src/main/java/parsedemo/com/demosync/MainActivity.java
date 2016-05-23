@@ -12,6 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.evernote.android.job.JobRequest;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
@@ -25,11 +28,13 @@ public class MainActivity extends AppCompatActivity {
     private List<Movie> movieList = new ArrayList<>();
     RecyclerView rv;
     MoviesAdapter mAdapter;
+    GcmNetworkManager mGcmNetworkManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mGcmNetworkManager = GcmNetworkManager.getInstance(this);
 
         rv = (RecyclerView)findViewById(R.id.rv);
         prepareMovieData();
@@ -46,12 +51,21 @@ public class MainActivity extends AppCompatActivity {
             //the app is being launched for first time, do something
             Log.e("Comments", "First time");
 
+            PeriodicTask task = new PeriodicTask.Builder()
+                    .setService(MyTaskService.class)
+                    .setTag("NM CALLES")
+                    .setPeriod(30L)
+                    .setPersisted(true)
+                    .build();
 
+            mGcmNetworkManager.schedule(task);
+
+/*
             AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 180000, pi); // Millisec * Second * Minute
-
+*/
             settings.edit().putBoolean("my_first_time", false).commit();
         }
 
