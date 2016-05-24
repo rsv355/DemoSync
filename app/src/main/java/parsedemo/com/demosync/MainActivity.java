@@ -1,5 +1,6 @@
 package parsedemo.com.demosync;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -51,9 +52,13 @@ public class MainActivity extends AppCompatActivity {
 
         Intent servicePointer =  new Intent(MainActivity.this,MyService.class);
 
-        stopService(servicePointer);
+        if(isMyServiceRunning(MyService.class)) {
+            stopService(servicePointer);
+            startService(servicePointer);
+        }else {
+            startService(servicePointer);
+        }
 
-        startService(servicePointer);
 
         /*
         if (easyDeviceInfo.getManufacturer().contains("Xiaomi") || easyDeviceInfo.getDevice().contains("Xiaomi") ||
@@ -105,6 +110,16 @@ public class MainActivity extends AppCompatActivity {
             //}
         //}
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void syncData() {
