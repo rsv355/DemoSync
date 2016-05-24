@@ -47,7 +47,7 @@ import parsedemo.com.demosync.helpers.GetPostClass;
  */
 public class MyService extends Service {
 
-    public static final long NOTIFY_INTERVAL = 2 * 60 * 1000; // 5 minutes
+    public static final long NOTIFY_INTERVAL =  30 * 1000; // 5 minutes
     //public static final long NOTIFY_INTERVAL = 1 * 60 * 1000; //1 minutes
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
@@ -71,7 +71,10 @@ public class MyService extends Service {
     }
 */
 
-
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -94,7 +97,7 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-      /*  // cancel if already existed
+     // cancel if already existed
         if (mTimer != null) {
             mTimer.cancel();
         } else {
@@ -102,30 +105,12 @@ public class MyService extends Service {
             mTimer = new Timer();
         }
         // schedule task
-        mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);*/
+        mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);
 
 
-     ///   mHandler.postDelayed(new Runnable() {
-      //      @Override
-      //      public void run() {
-                Log.e("@@@@ SErvice ", "called ");
 
-                Toast.makeText(getApplicationContext(), "Service called", Toast.LENGTH_SHORT).show();
-
-
-                if (isInternetConnected(getApplicationContext())) {
-
-                    syncData();
-
-                } else {
-                    Log.e("## else", "my serice else");
-                    //Toast.makeText(getApplicationContext(), "Please connect your Internet", Toast.LENGTH_LONG).show();
-                }
-
-       //     }
-       // },NOTIFY_INTERVAL);
     }
-/*
+
     class TimeDisplayTimerTask extends TimerTask {
 
         @Override
@@ -156,7 +141,7 @@ public class MyService extends Service {
             });
         }
 
-    }*/
+    }
 
     private void syncData(){
 

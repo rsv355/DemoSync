@@ -49,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
         EasyDeviceInfo easyDeviceInfo = new EasyDeviceInfo(MainActivity.this);
 
+        Intent servicePointer =  new Intent(MainActivity.this,MyService.class);
+
+        stopService(servicePointer);
+
+        startService(servicePointer);
+
+        /*
         if (easyDeviceInfo.getManufacturer().contains("Xiaomi") || easyDeviceInfo.getDevice().contains("Xiaomi") ||
                 easyDeviceInfo.getModel().contains("Xiaomi")) {
             Log.e("Xiaomi device", "mi device");
@@ -62,19 +69,20 @@ public class MainActivity extends AppCompatActivity {
 
             mGcmNetworkManager.schedule(task);*/
 
-            AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+         /*   AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 120000, pi); // Millisec * Second * Minute
+*/
+        //    startService(new Intent(MainActivity.this,MyService.class));
 
-
-        }else{
-            final String PREFS_NAME = "MyPrefsFile";
-            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-
-            if (settings.getBoolean("my_first_time", true)) {
+    //    }else{
+    //        final String PREFS_NAME = "MyPrefsFile";
+    //        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+//
+      //      if (settings.getBoolean("my_first_time", true)) {
                 //the app is being launched for first time, do something
-                Log.e("Comments", "First time");
+       //         Log.e("Comments", "First time");
 
                /* task = new PeriodicTask.Builder()
                         .setService(MyTaskService.class)
@@ -85,14 +93,17 @@ public class MainActivity extends AppCompatActivity {
 
                 mGcmNetworkManager.schedule(task);*/
 
-            AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+          /*  AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 120000, pi); // Millisec * Second * Minute
 
-                settings.edit().putBoolean("my_first_time", false).commit();
-            }
-        }
+               */
+
+         //       settings.edit().putBoolean("my_first_time", false).commit();
+
+            //}
+        //}
 
     }
 

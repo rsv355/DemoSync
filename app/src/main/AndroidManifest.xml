@@ -24,8 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-      <!--  <service
+<!--
+        <service
             android:name=".MyTaskService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
@@ -35,14 +35,30 @@
             </intent-filter>
         </service>-->
 
-      <receiver android:name=".AlramReciver" android:process=":remote"  >
+
+        <service
+            android:name=".MyService"
+            android:enabled="true">
+        </service>
+
+
+        <receiver android:name=".ConnectivityChangeReciever" android:process=":remote"  >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
 
             </intent-filter>
-            </receiver>
+        </receiver>
+
+    <!--  <receiver android:name=".AlramReciver" android:process=":remote"  >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
+            </intent-filter>
+            </receiver>-->
     </application>
 
 </manifest>
