@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGcmNetworkManager = GcmNetworkManager.getInstance(this);
+        //mGcmNetworkManager = GcmNetworkManager.getInstance(this);
 
         rv = (RecyclerView) findViewById(R.id.rv);
         prepareMovieData();
@@ -48,18 +48,25 @@ public class MainActivity extends AppCompatActivity {
         rv.setAdapter(mAdapter);
 
         EasyDeviceInfo easyDeviceInfo = new EasyDeviceInfo(MainActivity.this);
+
         if (easyDeviceInfo.getManufacturer().contains("Xiaomi") || easyDeviceInfo.getDevice().contains("Xiaomi") ||
                 easyDeviceInfo.getModel().contains("Xiaomi")) {
             Log.e("Xiaomi device", "mi device");
-            mGcmNetworkManager.getInstance(MainActivity.this).cancelAllTasks(MyTaskService.class);
+           /* mGcmNetworkManager.getInstance(MainActivity.this).cancelAllTasks(MyTaskService.class);
             task = new PeriodicTask.Builder()
                     .setService(MyTaskService.class)
                     .setTag("NM CALLES")
-                    .setPeriod(180000L)
+                    .setPeriod(30L)
                     .setPersisted(true)
                     .build();
 
-            mGcmNetworkManager.schedule(task);
+            mGcmNetworkManager.schedule(task);*/
+
+            AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(MainActivity.this, AlramReciver.class);
+            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+            am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 120000, pi); // Millisec * Second * Minute
+
 
         }else{
             final String PREFS_NAME = "MyPrefsFile";
@@ -69,21 +76,20 @@ public class MainActivity extends AppCompatActivity {
                 //the app is being launched for first time, do something
                 Log.e("Comments", "First time");
 
-                task = new PeriodicTask.Builder()
+               /* task = new PeriodicTask.Builder()
                         .setService(MyTaskService.class)
                         .setTag("NM CALLES")
-                        .setPeriod(180000L)
+                        .setPeriod(30L)
                         .setPersisted(true)
                         .build();
 
-                mGcmNetworkManager.schedule(task);
+                mGcmNetworkManager.schedule(task);*/
 
-/*
             AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(MainActivity.this, AlramReciver.class);
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-            am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 180000, pi); // Millisec * Second * Minute
-*/
+            am.setInexactRepeating (AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 120000, pi); // Millisec * Second * Minute
+
                 settings.edit().putBoolean("my_first_time", false).commit();
             }
         }
