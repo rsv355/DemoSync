@@ -61,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
         if(isMyServiceRunning(MyService.class)) {
             stopService(servicePointer);
             startService(servicePointer);
-            syncData();
+          //  syncData();
         }else {
             startService(servicePointer);
-            syncData();
+            //syncData();
         }
 
 
