@@ -2,16 +2,22 @@ package parsedemo.com.demosync;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.evernote.android.job.JobRequest;
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -55,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
         if(isMyServiceRunning(MyService.class)) {
             stopService(servicePointer);
             startService(servicePointer);
+            syncData();
         }else {
             startService(servicePointer);
+            syncData();
         }
 
 
@@ -151,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
                     handler.close();
 
-                    //  ShowNotification("New Message Received");
+                      ShowNotification("New Message Received");
 
                 } catch (Exception e) {
                     Log.e("## EXC in SERV", e.toString());
@@ -164,7 +172,49 @@ public class MainActivity extends AppCompatActivity {
             }
         }.call();
     }
+    private void ShowNotification(String msg) {
 
+
+        NotificationManager alarmNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        int notificaionType = 0;
+
+        PendingIntent contentIntent;
+
+        Intent newIntent = new Intent(getApplicationContext(), MainActivity.class);
+        newIntent.setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK & Intent.FLAG_ACTIVITY_CLEAR_TOP & Intent.FLAG_ACTIVITY_NEW_TASK);
+        contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, newIntent, 0);
+        notificaionType = 0;
+
+
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.InboxStyle inboxStyle =
+                new NotificationCompat.InboxStyle();
+        // String[] events = new String[6];
+        // inboxStyle.setBigContentTitle("Event tracker details:");
+        //   for (int i=0; i < events.length; i++) {
+        inboxStyle.addLine(msg);
+        //  }
+
+        NotificationCompat.Builder alamNotificationBuilder  = new NotificationCompat.Builder(
+                getApplicationContext()).setContentTitle("Demo Sync").setSmallIcon(R.mipmap.ic_launcher)
+                .setStyle(inboxStyle)
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setSound(alarmSound)
+                .setContentText(msg);
+
+        alamNotificationBuilder.setAutoCancel(true);
+        alamNotificationBuilder.getNotification().flags |= Notification.FLAG_AUTO_CANCEL;
+        alamNotificationBuilder.getNotification().defaults |= Notification.DEFAULT_LIGHTS;
+        alamNotificationBuilder.setContentIntent(contentIntent);
+
+        //Random random = new Random();
+        //int randomNo = random.nextInt(9999 - 1000) + 1000;
+
+        alarmNotificationManager.notify(notificaionType, alamNotificationBuilder.build());
+    }
     private void prepareMovieData() {
 
         try {

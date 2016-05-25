@@ -47,7 +47,7 @@ import parsedemo.com.demosync.helpers.GetPostClass;
  */
 public class MyService extends Service {
 
-    public static final long NOTIFY_INTERVAL =  30 * 1000; // 5 minutes
+    public static final long NOTIFY_INTERVAL =  3 * 60 * 1000; // 5 minutes
     //public static final long NOTIFY_INTERVAL = 1 * 60 * 1000; //1 minutes
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
